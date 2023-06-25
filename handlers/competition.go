@@ -56,6 +56,7 @@ func ListCompetition(c echo.Context) error {
 	}
 
 	data := repositories.GetCompetitions(c, params)
+	total := repositories.GetCountCompetitions(c, params)
 
-	return c.JSON(http.StatusOK, responses.GlobalResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"competitions": data, "total": 0}})
+	return c.JSON(http.StatusOK, responses.GlobalResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"competitions": data, "total": total}})
 }
