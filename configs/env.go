@@ -4,28 +4,29 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
 )
 
-type env struct {
+type Env struct {
 	DBHost     string
 	DBUser     string
 	DBName     string
 	DBPassword string
+	MediaHost  string
 }
 
-func EnvConf() env {
+func EnvConf() Env {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	config := env{
+	config := Env{
 		DBHost:     os.Getenv("DBHost"),
 		DBUser:     os.Getenv("DBUser"),
 		DBName:     os.Getenv("DBName"),
 		DBPassword: os.Getenv("DBPassword"),
+		MediaHost:  os.Getenv("MediaHost"),
 	}
 
 	return config

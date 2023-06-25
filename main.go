@@ -1,18 +1,24 @@
 package main
 
 import (
-	"ki-be/configs"
+	"ki-be/routes"
+	"ki-be/storages/db"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	// global setup
+	os.Setenv("TZ", "Asia/Jakarta")
+
 	e := echo.New()
 
 	// run database
-	configs.ConnectDB()
+	db.ConnectDB()
 
 	// routes
+	routes.CompetitionRoute(e)
 
 	e.Logger.Fatal(e.Start(":20224"))
 }
