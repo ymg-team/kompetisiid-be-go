@@ -18,7 +18,10 @@ func ListCompetition(c echo.Context) error {
 	var params repositories.ParamsGetListCompetitions
 
 	params.Status = c.QueryParam("status")
-	params.Draft = c.QueryParam("draft")
+	params.IsDraft = c.QueryParam("is_draft")
+	params.IsGuaranted = c.QueryParam("is_guaranted")
+	params.IsMediaPartner = c.QueryParam("is_mediapartner")
+	params.Username = c.QueryParam("username")
 
 	// get query page
 	if c.QueryParam("page") != "" {
@@ -37,13 +40,13 @@ func ListCompetition(c echo.Context) error {
 	}
 
 	// get query by main category
-	if c.QueryParam("main_category") != "" {
+	if c.QueryParam("id_main_category") != "" {
 		number, _ := strconv.Atoi(c.QueryParam("id_main_category"))
 		params.IdMainCategory = number
 	}
 
 	// get query by sub category
-	if c.QueryParam("sub_category") != "" {
+	if c.QueryParam("id_sub_category") != "" {
 		number, _ := strconv.Atoi(c.QueryParam("id_sub_category"))
 		params.IdSubCategory = number
 	}

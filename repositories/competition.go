@@ -17,7 +17,10 @@ type ParamsGetListCompetitions struct {
 	OrderBy        string
 	IdMainCategory int
 	IdSubCategory  int
-	Draft          string
+	IsDraft        string
+	IsGuaranted    string
+	IsMediaPartner string
+	Username       string
 }
 
 func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataModels.CompetitionDataModel {
@@ -27,7 +30,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 
 	query := db.Select(`id_kompetisi,judul_kompetisi, poster, draft, kompetisi.status,
 	kompetisi.total_hadiah, kompetisi.views, kompetisi.penyelenggara, 
-	kompetisi.garansi,
+	kompetisi.garansi, kompetisi.mediapartner,
 	kompetisi.created_at,kompetisi.updated_at, kompetisi.deadline, kompetisi.pengumuman,
 	kompetisi.total_hadiah,
 	user.username, user.id_user, 
@@ -37,9 +40,14 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 		Joins("JOIN main_kat ON main_kat.id_main_kat = kompetisi.id_main_kat").
 		Joins("JOIN sub_kat ON sub_kat.id_sub_kat = kompetisi.id_sub_kat")
 
+	// query by username
+	if params.Username != "" {
+		query = query.Where("user.username = ?", params.Username)
+	}
+
 	// query by draft / not
-	if params.Draft != "" {
-		query = query.Where("kompetisi.draft = ?", params.Draft)
+	if params.IsDraft != "" {
+		query = query.Where("kompetisi.draft = ?", params.IsDraft)
 	}
 
 	// query by competition status
@@ -57,6 +65,21 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 	// query by main category
 	if params.IdMainCategory != 0 {
 		query = query.Where("kompetisi.id_main_kat = ?", params.IdMainCategory)
+	}
+
+	// query by main category
+	if params.IdSubCategory != 0 {
+		query = query.Where("kompetisi.id_sub_kat = ?", params.IdSubCategory)
+	}
+
+	// query by guaranted
+	if params.IsGuaranted != "" {
+		query = query.Where("kompetisi.garansi = ?", params.IsGuaranted)
+	}
+
+	// query by mediapartner
+	if params.IsMediaPartner != "" {
+		query = query.Where("kompetisi.mediapartner = ?", params.IsMediaPartner)
 	}
 
 	query.
@@ -93,6 +116,8 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 				UpdatedAt:      n.UpdatedAt,
 				DeadlineAt:     n.DeadlineAt,
 				AnnouncementAt: n.AnnouncementAt,
+				IsGuaranted:    n.IsGuaranted == "1",
+				IsMediaPartner: n.IsMediaPartner == "1",
 			}
 
 			competitionData = append(competitionData, newData)
@@ -112,9 +137,14 @@ func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int 
 		Joins("JOIN main_kat ON main_kat.id_main_kat = kompetisi.id_main_kat").
 		Joins("JOIN sub_kat ON sub_kat.id_sub_kat = kompetisi.id_sub_kat")
 
+	// query by username
+	if params.Username != "" {
+		query = query.Where("user.username = ?", params.Username)
+	}
+
 	// query by draft / not
-	if params.Draft != "" {
-		query = query.Where("kompetisi.draft = ?", params.Draft)
+	if params.IsDraft != "" {
+		query = query.Where("kompetisi.draft = ?", params.IsDraft)
 	}
 
 	// query by competition status
@@ -132,6 +162,21 @@ func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int 
 	// query by main category
 	if params.IdMainCategory != 0 {
 		query = query.Where("kompetisi.id_main_kat = ?", params.IdMainCategory)
+	}
+
+	// query by main category
+	if params.IdSubCategory != 0 {
+		query = query.Where("kompetisi.id_sub_kat = ?", params.IdSubCategory)
+	}
+
+	// query by guaranted
+	if params.IsGuaranted != "" {
+		query = query.Where("kompetisi.garansi = ?", params.IsGuaranted)
+	}
+
+	// query by mediapartner
+	if params.IsMediaPartner != "" {
+		query = query.Where("kompetisi.mediapartner = ?", params.IsMediaPartner)
 	}
 
 	return int(query.Find(&resultData).RowsAffected)

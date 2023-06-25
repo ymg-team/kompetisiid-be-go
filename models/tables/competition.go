@@ -19,4 +19,6 @@ type Kompetisi struct {
 	UpdatedAt      string `gorm:"column:updated_at"`
 	AnnouncementAt string `gorm:"column:pengumuman"`
 	DeadlineAt     string `gorm:"column:deadline"`
+	IsGuaranted    string `gorm:"column:garansi"`
+	IsMediaPartner string `gorm:"column:mediapartner"`
 }
