@@ -15,7 +15,8 @@ func ImageNormalizer(image string) models.ImageModel {
 	var posterObj models.ImageModel
 	json.Unmarshal([]byte(image), &posterObj)
 
-	posterObj.Small = posterObj.Original
+	posterObj.Original = envConfig.MediaHost + posterObj.Original
+	posterObj.Small = envConfig.MediaHost + posterObj.Small
 
 	return posterObj
 }
