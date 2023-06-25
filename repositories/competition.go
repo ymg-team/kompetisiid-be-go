@@ -47,6 +47,8 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 	if params.Status != "" {
 		if params.Status == "all" {
 			query = query.Where("kompetisi.status IN (?)", []string{"posted", "waiting", "approve", "rejected"})
+		} else if params.Status == "active" {
+			query = query.Where("kompetisi.status = 'posted' AND kompetisi.pengumuman >= CURDATE()")
 		} else {
 			query = query.Where("kompetisi.status = ?", params.Status)
 		}
