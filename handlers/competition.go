@@ -15,13 +15,14 @@ func ListCompetition(c echo.Context) error {
 	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var params repositories.ParamsGetListCompetitions
-
-	params.Status = c.QueryParam("status")
-	params.IsDraft = c.QueryParam("is_draft")
-	params.IsGuaranted = c.QueryParam("is_guaranted")
-	params.IsMediaPartner = c.QueryParam("is_mediapartner")
-	params.Username = c.QueryParam("username")
+	var params = repositories.ParamsGetListCompetitions{
+		Status:         c.QueryParam("status"),
+		IsDraft:        c.QueryParam("is_draft"),
+		IsGuaranted:    c.QueryParam("is_guaranted"),
+		IsMediaPartner: c.QueryParam("is_mediapartner"),
+		Username:       c.QueryParam("username"),
+		Keyword:        c.QueryParam("keyword"),
+	}
 
 	// get query page
 	if c.QueryParam("page") != "" {
