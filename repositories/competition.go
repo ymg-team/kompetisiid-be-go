@@ -133,6 +133,10 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 				AnnouncementAt: n.AnnouncementAt,
 				IsGuaranted:    n.IsGuaranted == "1",
 				IsMediaPartner: n.IsMediaPartner == "1",
+				Stats: dataModels.CompetitionStatsModel{
+					Views: n.Views,
+					Likes: 0,
+				},
 			}
 
 			competitionData = append(competitionData, newData)
