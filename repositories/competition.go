@@ -100,6 +100,8 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 	query.
 		Limit(params.Limit).Offset(params.Limit * (params.Page - 1)).Order("id_kompetisi DESC").Find(&resultData)
 
+	query.Close()
+
 	// start mapping and normalize data
 	var competitionData []dataModels.CompetitionDataModel
 
@@ -151,5 +153,9 @@ func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int 
 
 	query := QueryListCompetitions(`id_kompetisi, judul_kompetisi`, params)
 
-	return int(query.Find(&resultData).RowsAffected)
+	total := query.Find(&resultData).RowsAffected
+
+	query.Close()
+
+	return int(total)
 }
