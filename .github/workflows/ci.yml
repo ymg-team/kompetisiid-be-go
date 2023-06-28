@@ -13,5 +13,5 @@ jobs:
       with:
         host: ${{ secrets.PROD_SSH_HOST }}
         user: ${{ secrets.PROD_SSH_USER }}
-        key: ${{ secrets.PROD_SSH_KEY }}
+        pass: ${{ secrets.PROD_SSH_PASS }}
         command: cd /home/webdev/Api/ki-be && git pull origin main && go build main.go && pm2 restart ki-be
