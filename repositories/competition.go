@@ -21,6 +21,7 @@ type ParamsGetListCompetitions struct {
 	IsDraft        string
 	IsGuaranted    string
 	IsMediaPartner string
+	IsManage       string
 	Username       string
 }
 
@@ -48,6 +49,11 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 	// query by draft / not
 	if params.IsDraft != "" {
 		query = query.Where("kompetisi.draft = ?", params.IsDraft)
+	}
+
+	// query by manage / not
+	if params.IsManage != "" {
+		query = query.Where("kompetisi.manage = ?", params.IsManage)
 	}
 
 	// query by competition status
@@ -90,7 +96,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 
 	query := QueryListCompetitions(`id_kompetisi,judul_kompetisi, poster, draft, kompetisi.status,
 	kompetisi.total_hadiah, kompetisi.views, kompetisi.penyelenggara, 
-	kompetisi.garansi, kompetisi.mediapartner,
+	kompetisi.garansi, kompetisi.mediapartner, kompetisi.manage,
 	kompetisi.created_at,kompetisi.updated_at, kompetisi.deadline, kompetisi.pengumuman,
 	kompetisi.total_hadiah,
 	user.username, user.id_user, 
@@ -135,6 +141,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 				AnnouncementAt: n.AnnouncementAt,
 				IsGuaranted:    n.IsGuaranted == "1",
 				IsMediaPartner: n.IsMediaPartner == "1",
+				IsManage:       n.IsManage == "1",
 				Stats: dataModels.CompetitionStatsModel{
 					Views: n.Views,
 					Likes: 0,

@@ -21,5 +21,6 @@ type Kompetisi struct {
 	DeadlineAt     string `gorm:"column:deadline"`
 	IsGuaranted    string `gorm:"column:garansi"`
 	IsMediaPartner string `gorm:"column:mediapartner"`
+	IsManage       string `gorm:"column:manage"`
 	Views          int    `gorm:"column:views"`
 }

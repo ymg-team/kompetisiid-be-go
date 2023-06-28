@@ -20,6 +20,7 @@ func ListCompetition(c echo.Context) error {
 		IsDraft:        c.QueryParam("is_draft"),
 		IsGuaranted:    c.QueryParam("is_guaranted"),
 		IsMediaPartner: c.QueryParam("is_mediapartner"),
+		IsManage:       c.QueryParam("is_manage"),
 		Username:       c.QueryParam("username"),
 		Keyword:        c.QueryParam("keyword"),
 	}

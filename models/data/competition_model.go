@@ -22,5 +22,6 @@ type CompetitionDataModel struct {
 	AnnouncementAt string                `json:"announcement_at"`
 	IsGuaranted    bool                  `json:"is_guaranted"`
 	IsMediaPartner bool                  `json:"is_mediapartner"`
+	IsManage       bool                  `json:"is_manage"`
 	Stats          CompetitionStatsModel `json:"stats"`
 }
