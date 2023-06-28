@@ -41,16 +41,26 @@ func ListCompetition(c echo.Context) error {
 		params.Limit = 9
 	}
 
-	// get query by main category
+	// get query by id main category
 	if c.QueryParam("id_main_category") != "" {
 		number, _ := strconv.Atoi(c.QueryParam("id_main_category"))
 		params.IdMainCategory = number
 	}
 
-	// get query by sub category
+	// get query by id main category
+	if c.QueryParam("main_category") != "" {
+		params.MainCategory = c.QueryParam("main_category")
+	}
+
+	// get query by id sub category
 	if c.QueryParam("id_sub_category") != "" {
 		number, _ := strconv.Atoi(c.QueryParam("id_sub_category"))
 		params.IdSubCategory = number
+	}
+
+	// get query by sub category
+	if c.QueryParam("sub_category") != "" {
+		params.SubCategory = c.QueryParam("sub_category")
 	}
 
 	// get query by status

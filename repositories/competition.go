@@ -18,6 +18,8 @@ type ParamsGetListCompetitions struct {
 	OrderBy        string
 	IdMainCategory int
 	IdSubCategory  int
+	MainCategory   string
+	SubCategory    string
 	IsDraft        string
 	IsGuaranted    string
 	IsMediaPartner string
@@ -68,14 +70,24 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 
 	}
 
-	// query by main category
+	// query by id main category
 	if params.IdMainCategory != 0 {
 		query = query.Where("kompetisi.id_main_kat = ?", params.IdMainCategory)
 	}
 
 	// query by main category
+	if params.MainCategory != "" {
+		query = query.Where("main_kat.main_kat = ?", params.MainCategory)
+	}
+
+	// query by id sub category
 	if params.IdSubCategory != 0 {
 		query = query.Where("kompetisi.id_sub_kat = ?", params.IdSubCategory)
+	}
+
+	// query by main category
+	if params.SubCategory != "" {
+		query = query.Where("sub_kat.sub_kat = ?", params.SubCategory)
 	}
 
 	// query by guaranted
