@@ -8,6 +8,7 @@ type CompetitionStatsModel struct {
 type CompetitionDataModel struct {
 	Id             string                `json:"id, omitempty" validate:"required"`
 	Title          string                `json:"title, omitempty" validate:"required"`
+	Sort           string                `json:"sort"`
 	Poster         ImageModel            `json:"poster, omitempty" validate:"required"`
 	User           UserModel             `json:"user, omitempty" validate:"required"`
 	MainCategory   MainCategoryModel     `json:"main_category"`

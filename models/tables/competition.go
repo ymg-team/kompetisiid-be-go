@@ -3,6 +3,7 @@ package models
 type Kompetisi struct {
 	Id             int    `gorm:"primaryKey;column:id_kompetisi"`
 	Title          string `gorm:"column:judul_kompetisi"`
+	Sort           string `gorm:"column:sort"`
 	Poster         string
 	Id_user        int
 	Username       string

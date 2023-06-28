@@ -94,7 +94,7 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataModels.CompetitionDataModel {
 	resultData := []tableModels.Kompetisi{}
 
-	query := QueryListCompetitions(`id_kompetisi,judul_kompetisi, poster, draft, kompetisi.status,
+	query := QueryListCompetitions(`id_kompetisi,judul_kompetisi, kompetisi.sort, poster, draft, kompetisi.status,
 	kompetisi.total_hadiah, kompetisi.views, kompetisi.penyelenggara, 
 	kompetisi.garansi, kompetisi.mediapartner, kompetisi.manage,
 	kompetisi.created_at,kompetisi.updated_at, kompetisi.deadline, kompetisi.pengumuman,
@@ -117,6 +117,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 			var newData = dataModels.CompetitionDataModel{
 				Id:     utils.EncCompetitionId(n.Id),
 				Title:  n.Title,
+				Sort:   n.Sort,
 				Poster: utils.ImageNormalizer(n.Poster),
 				Status: n.Status,
 				User: dataModels.UserModel{
