@@ -28,6 +28,10 @@ type ParamsGetListCompetitions struct {
 	Username       string
 }
 
+type ParamsGetCompetitionActions struct {
+	CompetitionId int
+}
+
 /**
  * function to generate query for list competitions based on params
  */
@@ -109,6 +113,21 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 	return query
 }
 
+/**
+* function to query to kompetisi_btn table
+ */
+func QueryCompetitionActions(selectCols string, params ParamsGetCompetitionActions) *gorm.DB {
+	db := storageDb.ConnectDB()
+
+	query := db.Select(selectCols)
+
+	if params.CompetitionId != 0 {
+		query = query.Where("id_kompetisi=?", params.CompetitionId)
+	}
+
+	return query
+}
+
 func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataModels.CompetitionDataModel {
 	resultData := []tableModels.Kompetisi{}
 
@@ -131,6 +150,12 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 
 	if len(resultData) > 0 {
 		for _, n := range resultData {
+
+			// get total likes by competition id
+			resultActions := []tableModels.Kompetisi_btn{}
+			queryActions := QueryCompetitionActions("id", ParamsGetCompetitionActions{CompetitionId: n.Id})
+			totalLikes := queryActions.Find(&resultActions).RowsAffected
+			queryActions.Close()
 
 			var newData = dataModels.CompetitionDataModel{
 				Id:     utils.EncCompetitionId(n.Id),
@@ -163,7 +188,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 				IsManage:       n.IsManage == "1",
 				Stats: dataModels.CompetitionStatsModel{
 					Views: n.Views,
-					Likes: 0,
+					Likes: int(totalLikes),
 				},
 			}
 
