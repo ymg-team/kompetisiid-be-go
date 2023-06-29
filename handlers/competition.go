@@ -76,7 +76,7 @@ func ListCompetition(c echo.Context) error {
 	status := 204
 	message := "Kompetisi tidak ditemukan"
 
-	if total > 0 {
+	if data != nil {
 		status = 200
 		message = "Success"
 	}
