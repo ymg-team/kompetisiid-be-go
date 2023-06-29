@@ -23,6 +23,7 @@ func ListCompetition(c echo.Context) error {
 		IsManage:       c.QueryParam("is_manage"),
 		Username:       c.QueryParam("username"),
 		Keyword:        c.QueryParam("keyword"),
+		Tag:            c.QueryParam("tag"),
 	}
 
 	// get query page

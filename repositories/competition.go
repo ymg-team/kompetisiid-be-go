@@ -15,6 +15,7 @@ type ParamsGetListCompetitions struct {
 	Limit          int
 	Page           int
 	Keyword        string
+	Tag            string
 	OrderBy        string
 	IdMainCategory int
 	IdSubCategory  int
@@ -38,9 +39,14 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 		Joins("JOIN main_kat ON main_kat.id_main_kat = kompetisi.id_main_kat").
 		Joins("JOIN sub_kat ON sub_kat.id_sub_kat = kompetisi.id_sub_kat")
 
-	// query search   by title
+	// query search by title
 	if params.Keyword != "" {
 		query = query.Where("kompetisi.judul_kompetisi LIKE ?", "%"+params.Keyword+"%")
+	}
+
+	// query filter by tag
+	if params.Tag != "" {
+		query = query.Where("kompetisi.tag LIKE ?", "%"+params.Tag+"%")
 	}
 
 	// query by username
