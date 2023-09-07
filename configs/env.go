@@ -8,11 +8,14 @@ import (
 )
 
 type Env struct {
-	DBHost     string
-	DBUser     string
-	DBName     string
-	DBPassword string
-	MediaHost  string
+	DBHost              string
+	DBUser              string
+	DBName              string
+	DBPassword          string
+	MediaHost           string
+	CloudinaryCloudName string
+	CloudinaryApiKey    string
+	CloudinarySecretKey string
 }
 
 func EnvConf() Env {
@@ -22,11 +25,14 @@ func EnvConf() Env {
 	}
 
 	config := Env{
-		DBHost:     os.Getenv("DBHost"),
-		DBUser:     os.Getenv("DBUser"),
-		DBName:     os.Getenv("DBName"),
-		DBPassword: os.Getenv("DBPassword"),
-		MediaHost:  os.Getenv("MediaHost"),
+		DBHost:              os.Getenv("DBHost"),
+		DBUser:              os.Getenv("DBUser"),
+		DBName:              os.Getenv("DBName"),
+		DBPassword:          os.Getenv("DBPassword"),
+		MediaHost:           os.Getenv("MediaHost"),
+		CloudinaryCloudName: os.Getenv("CloudinaryCloudName"),
+		CloudinaryApiKey:    os.Getenv("CloudinaryApiKey"),
+		CloudinarySecretKey: os.Getenv("CloudinarySecretKey"),
 	}
 
 	return config
