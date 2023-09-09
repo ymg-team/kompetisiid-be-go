@@ -24,7 +24,7 @@ func GetMySQLConnectionString() string {
 func ConnectDB() *gorm.DB {
 	var err error
 	conString := GetMySQLConnectionString()
-	log.Print(conString)
+	// log.Print(conString)
 
 	DB, err = gorm.Open(configs.GetDBType(), conString)
 	DB.SingularTable(true)
