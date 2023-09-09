@@ -131,7 +131,9 @@ func QueryCompetitionActions(selectCols string, params ParamsGetCompetitionActio
 func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataModels.CompetitionDataModel {
 	resultData := []tableModels.Kompetisi{}
 
-	query := QueryListCompetitions(`id_kompetisi,judul_kompetisi, kompetisi.sort, poster, draft, kompetisi.status,
+	query := QueryListCompetitions(`id_kompetisi,judul_kompetisi, kompetisi.sort, 
+	kompetisi.poster, kompetisi.poster_cloudinary, kompetisi.poster_cloudinary, 
+	draft, kompetisi.status,
 	kompetisi.total_hadiah, kompetisi.views, kompetisi.penyelenggara, 
 	kompetisi.garansi, kompetisi.mediapartner, kompetisi.manage,
 	kompetisi.created_at,kompetisi.updated_at, kompetisi.deadline, kompetisi.pengumuman,
@@ -161,7 +163,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 				Id:     utils.EncCompetitionId(n.Id),
 				Title:  n.Title,
 				Sort:   n.Sort,
-				Poster: utils.ImageNormalizer(n.Poster, ""),
+				Poster: utils.ImageNormalizer(n.Poster, n.Poster_cloudinary),
 				Status: n.Status,
 				User: dataModels.UserModel{
 					Username: n.Username,
@@ -209,4 +211,11 @@ func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int 
 	query.Close()
 
 	return int(total)
+}
+
+func WriteCompetition(c echo.Context, data tableModels.Kompetisi) (error, int64) {
+	db := storageDb.ConnectDB()
+	result := db.Omit("username", "avatar", "main_kat", "sub_kat").Create(data)
+
+	return result.Error, result.RowsAffected
 }

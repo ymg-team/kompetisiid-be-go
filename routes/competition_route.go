@@ -9,4 +9,5 @@ import (
 func CompetitionRoute(e *echo.Echo) {
 	// all routes relates to influencers comes here
 	e.GET("/competitions", handlers.ListCompetition)
+	e.POST("/competitions", handlers.AddCompetition)
 }
