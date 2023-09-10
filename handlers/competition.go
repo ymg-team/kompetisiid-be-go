@@ -140,7 +140,13 @@ func AddCompetition(c echo.Context) error {
 				if payload.Draft == true {
 					isDraft = "1"
 				}
-				new_data := tableModels.Kompetisi{
+
+				status := payload.Status
+				if userData.Level == "user" {
+					status = "waiting"
+				}
+
+				newData := tableModels.Kompetisi{
 					Id_user:           userData.Id,
 					Title:             payload.Title,
 					Sort:              payload.Description,
@@ -163,15 +169,13 @@ func AddCompetition(c echo.Context) error {
 					RegisterLink:      payload.RegisterLink,
 					Announcements:     payload.Announcements,
 					Tags:              payload.Tags,
-					Status:            payload.Status,
+					Status:            status,
 					Views:             1,
 					CreatedAt:         currentTime,
 					UpdatedAt:         currentTime,
 				}
 
-				fmt.Println(new_data)
-
-				errInsert, _ := repositories.WriteCompetition(c, new_data)
+				errInsert, _ := repositories.WriteCompetition(c, newData)
 
 				if errInsert != nil {
 					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusInternalServerError, Message: "Error insert ke DB", Data: nil})
@@ -184,6 +188,96 @@ func AddCompetition(c echo.Context) error {
 
 	}
 
-	return nil
+}
+
+func UpdateCompetition(c echo.Context) error {
+	req := c.Request()
+
+	// userKey validation
+	userKey := req.Header.Get("userKey")
+
+	if userKey == "" {
+		return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusForbidden, Message: "Please login first", Data: nil})
+	} else {
+		// check is available user with userKey
+		_, userData := repositories.GetUserByUserKey(userKey)
+
+		if userData.Id < 1 {
+			return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusForbidden, Message: "Please login first", Data: nil})
+		} else {
+			// -- update competition
+			//get influencer ids form query
+			encCompetitionId := c.Param("competition_id") + "=="
+			decCompetitionId := utils.DecCompetitionId(encCompetitionId)
+
+			// receive body
+			var payload payloadModels.PayloadCompetition
+			err := json.NewDecoder(req.Body).Decode(&payload)
+
+			if err != nil {
+				fmt.Println(err)
+				return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusBadRequest, Message: "Error parsing payload", Data: nil})
+			} else {
+				now := time.Now()
+
+				currentTime := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d", now.Year(), now.Month(), now.Day(),
+					now.Hour(), now.Minute(), now.Second())
+
+				var isGuaranteed string = "0"
+				if payload.IsGuaranteed == true {
+					isGuaranteed = "1"
+				}
+				var isMediaPartner string = "0"
+				if payload.IsMediaPartner == true {
+					isMediaPartner = "1"
+				}
+				var isDraft string = "0"
+				if payload.Draft == true {
+					isDraft = "1"
+				}
+
+				status := payload.Status
+				if userData.Level == "user" {
+					status = "waiting"
+				}
+
+				newData := tableModels.Kompetisi{
+					Title:            payload.Title,
+					Sort:             payload.Description,
+					Organizer:        payload.Organizer,
+					DeadlineAt:       payload.DeadlineDate,
+					AnnouncementAt:   payload.DeadlineDate,
+					Id_main_cat:      payload.MainCat,
+					Id_sub_cat:       payload.SubCat,
+					Content:          payload.Content,
+					PrizeTotal:       payload.PrizeTotal,
+					PrizeDescription: payload.PrizeDescription,
+					Contact:          payload.Contacts,
+					IsGuaranted:      isGuaranteed,
+					IsMediaPartner:   isMediaPartner,
+					IsManage:         "0",
+					Draft:            isDraft,
+					SourceLink:       payload.SourceLink,
+					RegisterLink:     payload.RegisterLink,
+					Announcements:    payload.Announcements,
+					Tags:             payload.Tags,
+					Status:           status,
+					UpdatedAt:        currentTime,
+				}
+
+				// WIP: handle change poster
+
+				errUpdate := repositories.UpdateCompetition(c, newData, decCompetitionId)
+
+				if errUpdate != nil {
+					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusInternalServerError, Message: "Error insert ke DB", Data: nil})
+				} else {
+					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusOK, Message: "Sukses update kompetisi", Data: nil})
+				}
+			}
+			// -- end of add competition
+		}
+
+	}
 
 }

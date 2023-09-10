@@ -23,5 +23,9 @@ func EncCompetitionId(competition_id int) string {
  * double base64 decode
  */
 func DecCompetitionId(enc_competition_id string) int {
-	return 0
+	competition_id, _ := b64.StdEncoding.DecodeString(enc_competition_id)
+	competition_id, _ = b64.StdEncoding.DecodeString(string(competition_id))
+	competition_id_number, _ := strconv.ParseInt(string(competition_id), 10, 64)
+
+	return int(competition_id_number)
 }

@@ -11,7 +11,7 @@ import (
 func GetUserByUserKey(userKey string) (error, tableModels.User) {
 	db := storageDb.ConnectDB()
 	resultData := tableModels.User{}
-	query := db.Select(`user.id_user, user.username`).Where("user.user_key = ?", userKey)
+	query := db.Select(`user.id_user, user.username, user.level`).Where("user.user_key = ?", userKey)
 	query.First(&resultData)
 	return nil, resultData
 }

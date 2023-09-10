@@ -219,3 +219,11 @@ func WriteCompetition(c echo.Context, data tableModels.Kompetisi) (error, int64)
 
 	return result.Error, result.RowsAffected
 }
+
+func UpdateCompetition(c echo.Context, data tableModels.Kompetisi, competitionId int) error {
+	db := storageDb.ConnectDB()
+	var kompetisi tableModels.Kompetisi
+	result := db.Model(&kompetisi).Where("id_kompetisi = ?", competitionId).UpdateColumn(data)
+
+	return result.Error
+}
