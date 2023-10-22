@@ -11,6 +11,7 @@ import (
 	"ki-be/utils"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -180,7 +181,21 @@ func AddCompetition(c echo.Context) error {
 				if errInsert != nil {
 					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusInternalServerError, Message: "Error insert ke DB", Data: nil})
 				} else {
-					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusOK, Message: "Sukses tambah kompetisi", Data: nil})
+
+					// post to telegram channel
+					if newData.Draft != "1" && newData.Status == "posted" {
+						insertedId := repositories.GetLatestCompetitionID(c, repositories.ParamsGetLatestCompetitionId{
+							Status:  newData.Status,
+							Id_user: newData.Id_user,
+							Draft:   newData.Draft,
+						})
+						encCompetitionId := utils.EncCompetitionId(insertedId)
+						chatMessage := "#KompetisiBaru\n" + newData.Title +
+							"\nhttps://kompetisi.id/competition/" + encCompetitionId + "/regulations/" + strings.ToLower(strings.ReplaceAll(newData.Title, " ", "-"))
+						repositories.TelegramSendMessage(chatMessage)
+					}
+
+					return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: http.StatusOK, Message: "Sukses tambah kompetisi", Data: nil})
 				}
 			}
 			// -- end of add competition

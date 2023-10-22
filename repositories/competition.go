@@ -32,6 +32,13 @@ type ParamsGetCompetitionActions struct {
 	CompetitionId int
 }
 
+type ParamsGetLatestCompetitionId struct {
+	Status  string
+	Draft   string
+	Id_user int
+	// Title   string
+}
+
 /**
  * function to generate query for list competitions based on params
  */
@@ -108,6 +115,39 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 	// query by mediapartner
 	if params.IsMediaPartner != "" {
 		query = query.Where("kompetisi.mediapartner = ?", params.IsMediaPartner)
+	}
+
+	return query
+}
+
+/**
+ * function to generate query for list competitions based on params
+ */
+func QueryLatestCompetitionID(selectCols string, params ParamsGetLatestCompetitionId) *gorm.DB {
+	db := storageDb.ConnectDB()
+
+	query := db.Select(selectCols)
+
+	// query by username
+	if params.Id_user != 0 {
+		query = query.Where("kompetisi.id_user = ?", params.Id_user)
+	}
+
+	// query by draft / not
+	if params.Draft != "" {
+		query = query.Where("kompetisi.draft = ?", params.Draft)
+	}
+
+	// query by competition status
+	if params.Status != "" {
+		if params.Status == "all" {
+			query = query.Where("kompetisi.status IN (?)", []string{"posted", "waiting", "approve", "rejected"})
+		} else if params.Status == "active" {
+			query = query.Where("kompetisi.status = 'posted' AND kompetisi.pengumuman >= CURTIME()")
+		} else {
+			query = query.Where("kompetisi.status = ?", params.Status)
+		}
+
 	}
 
 	return query
@@ -213,11 +253,11 @@ func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int 
 	return int(total)
 }
 
-func WriteCompetition(c echo.Context, data tableModels.Kompetisi) (error, int64) {
+func WriteCompetition(c echo.Context, data tableModels.Kompetisi) (error, *gorm.DB) {
 	db := storageDb.ConnectDB()
 	result := db.Omit("username", "avatar", "main_kat", "sub_kat").Create(data)
 
-	return result.Error, result.RowsAffected
+	return result.Error, result
 }
 
 func UpdateCompetition(c echo.Context, data tableModels.Kompetisi, competitionId int) error {
@@ -226,4 +266,17 @@ func UpdateCompetition(c echo.Context, data tableModels.Kompetisi, competitionId
 	result := db.Model(&kompetisi).Where("id_kompetisi = ?", competitionId).UpdateColumn(data)
 
 	return result.Error
+}
+
+func GetLatestCompetitionID(c echo.Context, params ParamsGetLatestCompetitionId) int {
+	resultData := tableModels.Kompetisi{}
+
+	query := QueryLatestCompetitionID(`id_kompetisi`, params)
+
+	query.
+		Limit(1).Order("id_kompetisi DESC").First(&resultData)
+
+	query.Close()
+
+	return resultData.Id
 }
