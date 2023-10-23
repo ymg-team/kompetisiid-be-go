@@ -287,7 +287,7 @@ func UpdateCompetition(c echo.Context) error {
 				if errUpdate != nil {
 					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusInternalServerError, Message: "Error insert ke DB", Data: nil})
 				} else {
-					if newData.Status != "posted" && newData.Draft != "1" {
+					if newData.Status == "posted" && newData.Draft != "1" {
 						chatMessage := "#KompetisiUpdate #Kompetisi\n" + newData.Title +
 							"\nhttps://kompetisi.id/competition/" + c.Param("competition_id") + "/regulations/" + strings.ToLower(strings.ReplaceAll(newData.Title, " ", "-"))
 						repositories.TelegramSendMessage(chatMessage)
