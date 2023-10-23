@@ -190,7 +190,7 @@ func AddCompetition(c echo.Context) error {
 							Draft:   newData.Draft,
 						})
 						encCompetitionId := utils.EncCompetitionId(insertedId)
-						chatMessage := "#KompetisiBaru\n" + newData.Title +
+						chatMessage := "#KompetisiBaru #Kompetisi\n" + newData.Title +
 							"\nhttps://kompetisi.id/competition/" + encCompetitionId + "/regulations/" + strings.ToLower(strings.ReplaceAll(newData.Title, " ", "-"))
 						repositories.TelegramSendMessage(chatMessage)
 					}
@@ -287,7 +287,13 @@ func UpdateCompetition(c echo.Context) error {
 				if errUpdate != nil {
 					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusInternalServerError, Message: "Error insert ke DB", Data: nil})
 				} else {
-					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusOK, Message: "Sukses update kompetisi", Data: nil})
+					if newData.Status != "posted" && newData.Draft != "1" {
+						chatMessage := "#KompetisiUpdate #Kompetisi\n" + newData.Title +
+							"\nhttps://kompetisi.id/competition/" + c.Param("competition_id") + "/regulations/" + strings.ToLower(strings.ReplaceAll(newData.Title, " ", "-"))
+						repositories.TelegramSendMessage(chatMessage)
+					}
+
+					return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: http.StatusOK, Message: "Sukses update kompetisi", Data: nil})
 				}
 			}
 			// -- end of add competition
