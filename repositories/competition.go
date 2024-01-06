@@ -11,7 +11,8 @@ import (
 )
 
 type ParamsGetListCompetitions struct {
-	Status         string
+	Status         string //one of: all, waiting, approve, rejected, posted
+	Condition      string //one of: all, active, ended
 	Limit          int
 	Page           int
 	Keyword        string
@@ -76,15 +77,26 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 	}
 
 	// query by competition status
+	// must be: 'all' , 'posted' , 'waiting' , 'approve' , 'rejected
 	if params.Status != "" {
 		if params.Status == "all" {
 			query = query.Where("kompetisi.status IN (?)", []string{"posted", "waiting", "approve", "rejected"})
-		} else if params.Status == "active" {
-			query = query.Where("kompetisi.status = 'posted' AND kompetisi.pengumuman >= CURTIME()")
 		} else {
 			query = query.Where("kompetisi.status = ?", params.Status)
 		}
+	}
 
+	// query by competition condition based on deadline time (used on dashboard)
+	// must be: 'all', 'active', 'ended'
+	if params.Condition != "" {
+		if params.Status == "active" {
+			//get active competition, announcement date deadline > now
+			query = query.Where("kompetisi.pengumuman >= CURTIME()")
+		} else if params.Status == "end" {
+			// get ended competition, now > announcement date
+			query = query.Where("CURTIME() > kompetisi.pengumuman")
+		}
+		// else show competition with all condition
 	}
 
 	// query by id main category

@@ -77,6 +77,13 @@ func ListCompetition(c echo.Context) error {
 		params.Status = "posted"
 	}
 
+	// get query by condition
+	if c.QueryParam("condition") != "" {
+		params.Condition = c.QueryParam("condition")
+	} else {
+		params.Condition = "active"
+	}
+
 	data := repositories.GetCompetitions(c, params)
 	total := repositories.GetCountCompetitions(c, params)
 	status := 204
@@ -288,6 +295,7 @@ func UpdateCompetition(c echo.Context) error {
 					return c.JSON(http.StatusBadRequest, responsesModels.GlobalResponse{Status: http.StatusInternalServerError, Message: "Error insert ke DB", Data: nil})
 				} else {
 					if newData.Status == "posted" && newData.Draft != "1" {
+						// send chat to telegram channel
 						chatMessage := "#KompetisiUpdate #Kompetisi\n" + newData.Title +
 							"\nhttps://kompetisi.id/competition/" + c.Param("competition_id") + "/regulations/" + strings.ToLower(strings.ReplaceAll(newData.Title, " ", "-"))
 						repositories.TelegramSendMessage(chatMessage)
