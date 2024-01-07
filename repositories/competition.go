@@ -89,10 +89,10 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 	// query by competition condition based on deadline time (used on dashboard)
 	// must be: 'all', 'active', 'ended'
 	if params.Condition != "" {
-		if params.Status == "active" {
+		if params.Condition == "active" {
 			//get active competition, announcement date deadline > now
 			query = query.Where("kompetisi.pengumuman >= CURTIME()")
-		} else if params.Status == "end" {
+		} else if params.Condition == "end" {
 			// get ended competition, now > announcement date
 			query = query.Where("CURTIME() > kompetisi.pengumuman")
 		}
