@@ -81,7 +81,7 @@ func ListCompetition(c echo.Context) error {
 	if c.QueryParam("condition") != "" {
 		params.Condition = c.QueryParam("condition")
 	} else {
-		params.Condition = "active"
+		params.Condition = ""
 	}
 
 	data := repositories.GetCompetitions(c, params)

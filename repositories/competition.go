@@ -71,11 +71,6 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 		query = query.Where("kompetisi.draft = ?", params.IsDraft)
 	}
 
-	// query by manage / not
-	if params.IsManage != "" {
-		query = query.Where("kompetisi.manage = ?", params.IsManage)
-	}
-
 	// query by competition status
 	// must be: 'all' , 'posted' , 'waiting' , 'approve' , 'rejected
 	if params.Status != "" {
@@ -127,6 +122,11 @@ func QueryListCompetitions(selectCols string, params ParamsGetListCompetitions) 
 	// query by mediapartner
 	if params.IsMediaPartner != "" {
 		query = query.Where("kompetisi.mediapartner = ?", params.IsMediaPartner)
+	}
+
+	// query by manage / not
+	if params.IsManage != "" {
+		query = query.Where("kompetisi.manage = ?", params.IsManage)
 	}
 
 	return query
