@@ -40,7 +40,7 @@ func ListCompetition(c echo.Context) error {
 		params.Page = 1
 	}
 
-	// get query page
+	// get query limit
 	if c.QueryParam("limit") != "" {
 		limitNumber, _ := strconv.Atoi(c.QueryParam("limit"))
 		params.Limit = limitNumber

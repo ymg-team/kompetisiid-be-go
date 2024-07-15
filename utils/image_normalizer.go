@@ -13,24 +13,41 @@ var cloudinaryCloudName string = envConfig.CloudinaryCloudName
 var cloudinaryURL string = "https://res.cloudinary.com/" + cloudinaryCloudName + "/image/upload/kompetisi-id"
 
 /**
-* function to normalize image from db to ki cdn / cloudinary
+* function to normalize competition image from db to ki cdn / cloudinary
  */
-func ImageNormalizer(image string, imageCloudinary string) models.ImageModel {
-	var posterObj models.ImageModel
+func ImageCompetitionNormalizer(image string, imageCloudinary string) models.ImageModel {
+	var imgObj models.ImageModel
 
-	// check is poster from cloudinary
+	// check is available poster from cloudinary
 	if imageCloudinary != "" {
-		json.Unmarshal([]byte(imageCloudinary), &posterObj)
+		json.Unmarshal([]byte(imageCloudinary), &imgObj)
 	} else {
 		// check is poster from migration server
-		json.Unmarshal([]byte(image), &posterObj)
+		json.Unmarshal([]byte(image), &imgObj)
 
-		if !strings.Contains(posterObj.Original, "http") {
-			posterObj.Original = strings.Replace(cloudinaryURL+posterObj.Original, "/poster", "/competition", -1)
-			posterObj.Small = strings.Replace(cloudinaryURL+posterObj.Small, "/poster", "/competition", -1)
+		if !strings.Contains(imgObj.Original, "http") {
+			imgObj.Original = strings.Replace(cloudinaryURL+imgObj.Original, "/poster", "/competition", -1)
+			imgObj.Small = strings.Replace(cloudinaryURL+imgObj.Small, "/poster", "/competition", -1)
 		}
 
 	}
 
-	return posterObj
+	return imgObj
+}
+
+/**
+* function to normalize news image from db to ki cdn / cludinary
+ */
+func ImageNewsNormalizer(image string, imageCloudinary string) models.ImageModel {
+	var imgObj models.ImageModel
+
+	// check is available image from cloudinary
+
+	if imageCloudinary != "" {
+		json.Unmarshal([]byte(imageCloudinary), &imgObj)
+	} else {
+		//
+	}
+
+	return imgObj
 }

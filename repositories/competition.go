@@ -215,7 +215,7 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 				Id:     utils.EncCompetitionId(n.Id),
 				Title:  n.Title,
 				Sort:   n.Sort,
-				Poster: utils.ImageNormalizer(n.Poster, n.Poster_cloudinary),
+				Poster: utils.ImageCompetitionNormalizer(n.Poster, n.Poster_cloudinary),
 				Status: n.Status,
 				User: dataModels.UserModel{
 					Username: n.Username,
