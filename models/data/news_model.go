@@ -6,14 +6,14 @@ type NewsStatsModel struct {
 }
 
 type NewsDataModel struct {
-	Id              string         `json:"id, omitempty" validate:"required"`
-	Title           string         `json:"title, omitempty" validate:"required"`
-	Image           string         `json:"image, omitempty"`
-	ImageCloudinary string         `json:image_cloudinary, omitempty`
-	Content         string         `json:"content, omitempty"`
-	CreatedAt       string         `json:"created_at"`
-	UpdatedAt       string         `json:"updated_at"`
-	User            UserModel      `json:"author, omitempty" validate:"required"`
-	Stats           NewsStatsModel `json:"stats"`
-	IsDraft         bool           `json:"is_boolean" bson:"draft"`
+	Id        string         `json:"id, omitempty" validate:"required"`
+	Title     string         `json:"title, omitempty" validate:"required"`
+	Image     ImageModel     `json:"image, omitempty"`
+	Content   string         `json:"content, omitempty"`
+	CreatedAt string         `json:"created_at"`
+	UpdatedAt string         `json:"updated_at"`
+	User      UserModel      `json:"author, omitempty" validate:"required"`
+	Stats     NewsStatsModel `json:"stats"`
+	IsDraft   bool           `json:"is_boolean" bson:"draft"`
+	Tags      string         `json:"tags, omitempty"`
 }

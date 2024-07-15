@@ -51,7 +51,9 @@ func QueryListNews(selectCols string, params ParamsGetListNews) *gorm.DB {
 func GetNews(c echo.Context, params ParamsGetListNews) []dataModels.NewsDataModel {
 	dbData := []tableModels.Berita{}
 
-	query := QueryListNews(`id, title`, params)
+	query := QueryListNews(`berita.id, berita.title, berita.image, berita.content, berita.created_at, berita.updated_at, berita.author,
+		berita.image, berita.image_cloudinary, berita.tag,
+		user.username`, params)
 
 	query.Limit(params.Limit).Offset(params.Limit * (params.Page - 1)).Order("id DESC").Find(&dbData)
 
@@ -68,11 +70,14 @@ func GetNews(c echo.Context, params ParamsGetListNews) []dataModels.NewsDataMode
 			var newData = dataModels.NewsDataModel{
 				Id:        utils.EncCompetitionId(n.Id),
 				Title:     n.Title,
-				Image:     "",
+				Image:     utils.ImageNewsNormalizer(n.Image, n.ImageCloudinary),
 				Content:   n.Content,
 				CreatedAt: n.CreatedAt,
 				UpdatedAt: n.UpdatedAt,
-				// User: userdata
+				Tags:      n.Tags,
+				User: dataModels.UserModel{
+					Username: n.Username,
+				},
 				// Stats: stats
 				// IsDraft: n.IsDraft == "1"
 			}

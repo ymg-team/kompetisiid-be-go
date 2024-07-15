@@ -46,7 +46,14 @@ func ImageNewsNormalizer(image string, imageCloudinary string) models.ImageModel
 	if imageCloudinary != "" {
 		json.Unmarshal([]byte(imageCloudinary), &imgObj)
 	} else {
-		//
+		// parsing string to object
+		json.Unmarshal([]byte(image), &imgObj)
+
+		// check is image from migrations server
+		if !strings.Contains(imgObj.Original, "http") {
+			imgObj.Original = cloudinaryURL + imgObj.Original
+			imgObj.Small = cloudinaryURL + imgObj.Small
+		}
 	}
 
 	return imgObj

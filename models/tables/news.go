@@ -12,4 +12,6 @@ type Berita struct {
 	Status          string `gorm:status`
 	IsDraft         int    `gorm:draft`
 	Tags            string `gorm:"column:tag"`
+	Username        string
+	Draft           int `gorm:"column:draft"`
 }
