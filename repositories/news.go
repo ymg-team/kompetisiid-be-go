@@ -11,6 +11,7 @@ import (
 )
 
 type ParamsGetListNews struct {
+	Id       int
 	Username string
 	Keyword  string
 	Tag      string
@@ -40,6 +41,11 @@ func QueryListNews(selectCols string, params ParamsGetListNews) *gorm.DB {
 	// query get by username
 	if params.Username != "" {
 		query = query.Where("berita.author = ?", params.Username)
+	}
+
+	// query get by id news
+	if params.Id != 0 {
+		query = query.Where("berita.id = ?", params.Id)
 	}
 
 	return query
@@ -102,4 +108,47 @@ func GetCountNews(c echo.Context, params ParamsGetListNews) int {
 	query.Close()
 
 	return int(total)
+}
+
+/**
+* function to get deat
+ */
+func GetNewsDetail(c echo.Context, params ParamsGetListNews) []dataModels.NewsDataModel {
+	dbData := []tableModels.Berita{}
+
+	query := QueryListNews(`berita.id, berita.title, berita.image, berita.content, berita.created_at, berita.updated_at, berita.author,
+		berita.image, berita.image_cloudinary, berita.tag,
+		user.username`, params)
+
+	query.Limit(1).Offset(0).Order("id DESC").Find(&dbData)
+
+	query.Close()
+
+	var normalizeData []dataModels.NewsDataModel
+
+	if len(dbData) > 0 {
+		for _, n := range dbData {
+
+			// generate url of image
+
+			var newData = dataModels.NewsDataModel{
+				Id:        utils.EncCompetitionId(n.Id),
+				Title:     n.Title,
+				Image:     utils.ImageNewsNormalizer(n.Image, n.ImageCloudinary),
+				Content:   n.Content,
+				CreatedAt: n.CreatedAt,
+				UpdatedAt: n.UpdatedAt,
+				Tags:      n.Tags,
+				User: dataModels.UserModel{
+					Username: n.Username,
+				},
+				// Stats: stats
+				// IsDraft: n.IsDraft == "1"
+			}
+
+			normalizeData = append(normalizeData, newData)
+		}
+	}
+
+	return normalizeData
 }

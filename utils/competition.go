@@ -27,5 +27,7 @@ func DecCompetitionId(enc_competition_id string) int {
 	competition_id, _ = b64.StdEncoding.DecodeString(string(competition_id))
 	competition_id_number, _ := strconv.ParseInt(string(competition_id), 10, 64)
 
+	// println(int(competition_id_number))
+
 	return int(competition_id_number)
 }

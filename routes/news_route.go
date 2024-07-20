@@ -9,4 +9,6 @@ import (
 func NewsRoute(e *echo.Echo) {
 	// all routes relates to news comes here
 	e.GET("/news", handlers.ListNews)
+	// routes of detail news by id
+	e.GET("/news/detail", handlers.DetailNews)
 }

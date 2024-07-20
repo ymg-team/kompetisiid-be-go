@@ -97,6 +97,10 @@ func ListCompetition(c echo.Context) error {
 	return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: status, Message: message, Data: &echo.Map{"competitions": data, "total": total}})
 }
 
+// func DetailCompetition(c echo.Context) error {
+
+// }
+
 func AddCompetition(c echo.Context) error {
 	req := c.Request()
 
