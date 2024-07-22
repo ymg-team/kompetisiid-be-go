@@ -20,6 +20,7 @@ func ListNews(c echo.Context) error {
 		Username: c.QueryParam("username"),
 		Keyword:  c.QueryParam("keyword"),
 		Tag:      c.QueryParam("tag"),
+		Status:   c.QueryParam("status"),
 	}
 
 	// get query page
