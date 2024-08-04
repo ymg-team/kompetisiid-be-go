@@ -11,4 +11,5 @@ func CompetitionRoute(e *echo.Echo) {
 	e.GET("/competitions", handlers.ListCompetition)
 	e.POST("/competitions", handlers.AddCompetition)
 	e.PUT("/competitions/:competition_id", handlers.UpdateCompetition)
+	e.GET("/competitions/detail", handlers.DetailCompetition)
 }

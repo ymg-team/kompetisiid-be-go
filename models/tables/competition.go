@@ -18,9 +18,10 @@ type Kompetisi struct {
 	Status            string `gorm:"column:status"`
 	PrizeTotal        int    `gorm:"column:total_hadiah"`
 	PrizeDescription  string `gorm:"column:hadiah"`
-	Contact           string `gorm:"column:kontak"`
+	Contacts          string `gorm:"column:kontak"`
 	Organizer         string `gorm:"column:penyelenggara"`
 	AnnouncementAt    string `gorm:"column:pengumuman"`
+	Announcements     string `gorm:"column:dataPengumuman"`
 	DeadlineAt        string `gorm:"column:deadline"`
 	IsGuaranted       string `gorm:"column:garansi"`
 	IsMediaPartner    string `gorm:"column:mediapartner"`
@@ -28,7 +29,6 @@ type Kompetisi struct {
 	SourceLink        string `gorm:"column:sumber"`
 	RegisterLink      string `gorm:"column:ikuti"`
 	Views             int    `gorm:"column:views"`
-	Announcements     string `gorm:"column:dataPengumuman"`
 	Tags              string `gorm:"column:tag"`
 	CreatedAt         string `gorm:"column:created_at"`
 	UpdatedAt         string `gorm:"column:updated_at"`

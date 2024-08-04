@@ -97,9 +97,34 @@ func ListCompetition(c echo.Context) error {
 	return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: status, Message: message, Data: &echo.Map{"competitions": data, "total": total}})
 }
 
-// func DetailCompetition(c echo.Context) error {
+func DetailCompetition(c echo.Context) error {
+	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-// }
+	// get query id
+	if c.QueryParam("id") != "" {
+		encCompetitionId := c.QueryParam("id") + "=="
+		decId := utils.DecCompetitionId(encCompetitionId)
+
+		if decId != 0 {
+			var params = repositories.ParamsGetListCompetitions{
+				Id: decId,
+			}
+
+			data := repositories.GetCompetitionDetail(c, params)
+
+			if len(data) > 0 {
+				return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 200, Message: "Success", Data: &echo.Map{"competition": data[0]}})
+			} else {
+				return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 204, Message: "Kompetisi tidak ditemukan"})
+			}
+		}
+
+	}
+
+	// return not found result
+	return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 204, Message: "Kompetisi tidak ditemukan"})
+}
 
 func AddCompetition(c echo.Context) error {
 	req := c.Request()
@@ -172,7 +197,7 @@ func AddCompetition(c echo.Context) error {
 					Content:           payload.Content,
 					PrizeTotal:        payload.PrizeTotal,
 					PrizeDescription:  payload.PrizeDescription,
-					Contact:           payload.Contacts,
+					Contacts:          payload.Contacts,
 					IsGuaranted:       isGuaranteed,
 					IsMediaPartner:    isMediaPartner,
 					IsManage:          "0",
@@ -278,7 +303,7 @@ func UpdateCompetition(c echo.Context) error {
 					Content:          payload.Content,
 					PrizeTotal:       payload.PrizeTotal,
 					PrizeDescription: payload.PrizeDescription,
-					Contact:          payload.Contacts,
+					Contacts:         payload.Contacts,
 					IsGuaranted:      isGuaranteed,
 					IsMediaPartner:   isMediaPartner,
 					IsManage:         "0",

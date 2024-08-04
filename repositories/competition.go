@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"encoding/json"
 	dataModels "ki-be/models/data"
 	tableModels "ki-be/models/tables"
 	storageDb "ki-be/storages/db"
@@ -27,6 +28,7 @@ type ParamsGetListCompetitions struct {
 	IsMediaPartner string
 	IsManage       string
 	Username       string
+	Id             int
 }
 
 type ParamsGetCompetitionActions struct {
@@ -180,6 +182,9 @@ func QueryCompetitionActions(selectCols string, params ParamsGetCompetitionActio
 	return query
 }
 
+/*
+* function to get list competition
+ */
 func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataModels.CompetitionDataModel {
 	resultData := []tableModels.Kompetisi{}
 
@@ -253,6 +258,99 @@ func GetCompetitions(c echo.Context, params ParamsGetListCompetitions) []dataMod
 	return competitionData
 }
 
+/**
+* function to get competition detail
+ */
+func GetCompetitionDetail(c echo.Context, params ParamsGetListCompetitions) []dataModels.CompetitionDataModel {
+	dbData := []tableModels.Kompetisi{}
+
+	query := QueryListCompetitions(`id_kompetisi,judul_kompetisi, kompetisi.sort, 
+	kompetisi.poster, kompetisi.poster_cloudinary, kompetisi.poster_cloudinary, 
+	draft, kompetisi.status, kompetisi.konten,
+	kompetisi.total_hadiah, kompetisi.views, kompetisi.penyelenggara, 
+	kompetisi.garansi, kompetisi.mediapartner, kompetisi.manage,
+	kompetisi.created_at,kompetisi.updated_at, kompetisi.deadline, kompetisi.pengumuman,
+	kompetisi.total_hadiah, kompetisi.hadiah,
+	kompetisi.dataPengumuman,
+	kompetisi.kontak,
+	kompetisi.tag,
+	user.username, user.id_user, 
+	main_kat.id_main_kat, main_kat.main_kat, 
+	sub_kat.id_sub_kat, sub_kat,sub_kat`, params)
+	query.Where("id_kompetisi = ?", params.Id).Limit(1).Offset(0).Find(&dbData)
+	// query.Close()
+
+	var normalizeData []dataModels.CompetitionDataModel
+
+	if len(dbData) > 0 {
+
+		for _, n := range dbData {
+
+			// get total likes by competition id
+			resultActions := []tableModels.Kompetisi_btn{}
+			queryActions := QueryCompetitionActions("id", ParamsGetCompetitionActions{CompetitionId: n.Id})
+			totalLikes := queryActions.Find(&resultActions).RowsAffected
+			queryActions.Close()
+
+			// JSON.parse announcements data
+			dataAnnouncements := []dataModels.CompetitionAnnouncementModel{}
+			json.Unmarshal([]byte(n.Announcements), &dataAnnouncements)
+
+			// JSON.parse contacts data
+			dataContacts := []dataModels.CompetitionContactModel{}
+			json.Unmarshal([]byte(n.Contacts), &dataContacts)
+
+			var newData = dataModels.CompetitionDataModel{
+				Id:       utils.EncCompetitionId(n.Id),
+				Title:    n.Title,
+				Sort:     n.Sort,
+				Poster:   utils.ImageCompetitionNormalizer(n.Poster, n.Poster_cloudinary),
+				Status:   n.Status,
+				Contacts: dataContacts,
+				Content:  n.Content,
+				User: dataModels.UserModel{
+					Username: n.Username,
+				},
+				MainCategory: dataModels.MainCategoryModel{
+					Id:   n.Id_main_cat,
+					Name: n.Main_cat,
+				},
+				SubCategory: dataModels.SubCategoryModel{
+					Id:   n.Id_sub_cat,
+					Name: n.Sub_cat,
+				},
+				Draft: n.Draft == "1",
+				Prize: dataModels.PrizeModel{
+					Total:       n.PrizeTotal,
+					Description: n.PrizeDescription,
+				},
+				AnnouncementAt: n.AnnouncementAt,
+				Announcements:  dataAnnouncements,
+				Organizer:      n.Organizer,
+				CreatedAt:      n.CreatedAt,
+				UpdatedAt:      n.UpdatedAt,
+				DeadlineAt:     n.DeadlineAt,
+				IsGuaranted:    n.IsGuaranted == "1",
+				IsMediaPartner: n.IsMediaPartner == "1",
+				IsManage:       n.IsManage == "1",
+				Stats: dataModels.CompetitionStatsModel{
+					Views: n.Views,
+					Likes: int(totalLikes),
+				},
+				Tags: n.Tags,
+			}
+
+			normalizeData = append(normalizeData, newData)
+		}
+
+	}
+
+	return normalizeData
+}
+
+/*
+* function to get count competition
+ */
 func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int {
 	resultData := []tableModels.Kompetisi{}
 
