@@ -51,9 +51,9 @@ func QueryListNews(selectCols string, params ParamsGetListNews) *gorm.DB {
 
 	// query by status
 	if params.Status == "published" {
-		query = query.Where("berita.draft = ?", 0)
+		query = query.Where("berita.draft = ?", "0")
 	} else if params.Status == "draft" {
-		query = query.Where("berita.draft = ?", 1)
+		query = query.Where("berita.draft = ?", "1")
 	}
 
 	return query
