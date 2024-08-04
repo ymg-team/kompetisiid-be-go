@@ -14,4 +14,5 @@ type Berita struct {
 	Tags            string `gorm:"column:tag"`
 	Username        string
 	Draft           int `gorm:"column:draft"`
+	Views           int `gorm:"column:views"`
 }

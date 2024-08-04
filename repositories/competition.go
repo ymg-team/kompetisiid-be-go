@@ -390,3 +390,14 @@ func GetLatestCompetitionID(c echo.Context, params ParamsGetLatestCompetitionId)
 
 	return resultData.Id
 }
+
+/**
+* function to increment views of news by ud
+ */
+func IncrCompetitionViews(v echo.Context, competitionId int) *gorm.DB {
+	db := storageDb.ConnectDB()
+
+	NewsData := tableModels.Kompetisi{}
+
+	return db.Model(&NewsData).Where("kompetisi.id_kompetisi = ?", competitionId).Update("Views", gorm.Expr("views + ?", 1))
+}

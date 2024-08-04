@@ -114,6 +114,10 @@ func DetailCompetition(c echo.Context) error {
 			data := repositories.GetCompetitionDetail(c, params)
 
 			if len(data) > 0 {
+
+				// increment views
+				repositories.IncrCompetitionViews(c, decId)
+
 				return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 200, Message: "Success", Data: &echo.Map{"competition": data[0]}})
 			} else {
 				return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 204, Message: "Kompetisi tidak ditemukan"})

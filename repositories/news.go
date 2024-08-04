@@ -126,6 +126,7 @@ func GetNewsDetail(c echo.Context, params ParamsGetListNews) []dataModels.NewsDa
 
 	query := QueryListNews(`berita.id, berita.title, berita.image, berita.content, berita.created_at, berita.updated_at, berita.author,
 		berita.image, berita.image_cloudinary, berita.tag,
+		berita.views,
 		user.username`, params)
 
 	query.Limit(1).Offset(0).Order("id DESC").Find(&dbData)
@@ -150,8 +151,9 @@ func GetNewsDetail(c echo.Context, params ParamsGetListNews) []dataModels.NewsDa
 				User: dataModels.UserModel{
 					Username: n.Username,
 				},
-				// Stats: stats
-				// IsDraft: n.IsDraft == "1"
+				Stats: dataModels.NewsStatsModel{
+					Views: n.Views,
+				},
 			}
 
 			normalizeData = append(normalizeData, newData)
@@ -159,4 +161,15 @@ func GetNewsDetail(c echo.Context, params ParamsGetListNews) []dataModels.NewsDa
 	}
 
 	return normalizeData
+}
+
+/**
+* function to increment views of news by ud
+ */
+func IncrNewsViews(v echo.Context, newsId int) *gorm.DB {
+	db := storageDb.ConnectDB()
+
+	NewsData := tableModels.Berita{}
+
+	return db.Model(&NewsData).Where("berita.id = ?", newsId).Update("Views", gorm.Expr("views + ?", 1))
 }

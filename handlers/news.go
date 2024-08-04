@@ -69,6 +69,9 @@ func DetailNews(c echo.Context) error {
 			data := repositories.GetNewsDetail(c, params)
 
 			if len(data) > 0 {
+				// increment views
+				repositories.IncrNewsViews(c, decId)
+
 				return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 200, Message: "Success", Data: &echo.Map{"news": data}})
 			} else {
 				return c.JSON(http.StatusOK, responsesModels.GlobalResponse{Status: 204, Message: "Berita tidak ditemukan"})
