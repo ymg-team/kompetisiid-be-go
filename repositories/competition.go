@@ -366,7 +366,7 @@ func GetCountCompetitions(c echo.Context, params ParamsGetListCompetitions) int 
 func WriteCompetition(c echo.Context, data tableModels.Kompetisi) (error, *gorm.DB) {
 	db := storageDb.ConnectDB()
 	result := db.Omit("username", "avatar", "main_kat", "sub_kat").Create(data)
-
+	db.Close()
 	return result.Error, result
 }
 
@@ -374,7 +374,7 @@ func UpdateCompetition(c echo.Context, data tableModels.Kompetisi, competitionId
 	db := storageDb.ConnectDB()
 	var kompetisi tableModels.Kompetisi
 	result := db.Model(&kompetisi).Where("id_kompetisi = ?", competitionId).UpdateColumn(data)
-
+	db.Close()
 	return result.Error
 }
 
@@ -394,10 +394,12 @@ func GetLatestCompetitionID(c echo.Context, params ParamsGetLatestCompetitionId)
 /**
 * function to increment views of news by ud
  */
-func IncrCompetitionViews(v echo.Context, competitionId int) *gorm.DB {
+func IncrCompetitionViews(v echo.Context, competitionId int) {
 	db := storageDb.ConnectDB()
 
 	NewsData := tableModels.Kompetisi{}
 
-	return db.Model(&NewsData).Where("kompetisi.id_kompetisi = ?", competitionId).Update("Views", gorm.Expr("views + ?", 1))
+	db.Model(&NewsData).Where("kompetisi.id_kompetisi = ?", competitionId).Update("Views", gorm.Expr("views + ?", 1))
+
+	db.Close()
 }

@@ -166,10 +166,12 @@ func GetNewsDetail(c echo.Context, params ParamsGetListNews) []dataModels.NewsDa
 /**
 * function to increment views of news by ud
  */
-func IncrNewsViews(v echo.Context, newsId int) *gorm.DB {
+func IncrNewsViews(v echo.Context, newsId int) {
 	db := storageDb.ConnectDB()
 
 	NewsData := tableModels.Berita{}
 
-	return db.Model(&NewsData).Where("berita.id = ?", newsId).Update("Views", gorm.Expr("views + ?", 1))
+	db.Model(&NewsData).Where("berita.id = ?", newsId).Update("Views", gorm.Expr("views + ?", 1))
+
+	db.Close()
 }
