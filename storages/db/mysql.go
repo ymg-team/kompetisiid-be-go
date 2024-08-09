@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ki-be/configs"
 	"log"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -31,6 +32,10 @@ func ConnectDB() *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	DB.DB().SetMaxIdleConns(20)
+	DB.DB().SetMaxOpenConns(200)
+	DB.DB().SetConnMaxLifetime(time.Hour)
 
 	return DB
 }
