@@ -339,7 +339,7 @@ func GetCompetitionDetail(c echo.Context, params ParamsGetListCompetitions) []da
 				},
 				Tags: n.Tags,
 				SourceLink: n.SourceLink,
-				RegisterLink: n.RegisterLink
+				RegisterLink: n.RegisterLink,
 			}
 
 			normalizeData = append(normalizeData, newData)
