@@ -338,6 +338,8 @@ func GetCompetitionDetail(c echo.Context, params ParamsGetListCompetitions) []da
 					Likes: int(totalLikes),
 				},
 				Tags: n.Tags,
+				SourceLink: n.SourceLink,
+				RegisterLink: n.RegisterLink
 			}
 
 			normalizeData = append(normalizeData, newData)
