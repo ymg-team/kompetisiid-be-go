@@ -41,4 +41,6 @@ type CompetitionDataModel struct {
 	Content          string                         `json:"content"`
 	Contacts         []CompetitionContactModel      `json:"contacts"`
 	Tags             string                         `json:"tags"`
+	RegisterLink     string                         `json:"register_link"`
+	SourceLink       string                         `json:"source_link"`
 }
