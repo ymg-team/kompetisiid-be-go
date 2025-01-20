@@ -274,6 +274,7 @@ func GetCompetitionDetail(c echo.Context, params ParamsGetListCompetitions) []da
 	kompetisi.dataPengumuman,
 	kompetisi.kontak,
 	kompetisi.tag,
+	kompetisi.sumber, kompetisi.ikuti,
 	user.username, user.id_user, 
 	main_kat.id_main_kat, main_kat.main_kat, 
 	sub_kat.id_sub_kat, sub_kat,sub_kat`, params)
